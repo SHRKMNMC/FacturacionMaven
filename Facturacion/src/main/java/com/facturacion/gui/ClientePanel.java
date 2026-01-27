@@ -17,13 +17,37 @@ public class ClientePanel extends JPanel {
     private JFormattedTextField txtLimiteCredito;
     private JComboBox<String> cmbProvincia, cmbMetodoPago;
     private JCheckBox chkActivo;
-
     private ClienteDAO clienteDAO = new ClienteDAO();
+
+    // 🔥 NUEVO: cliente en edición
+    private Cliente clienteEditando = null;
 
     public ClientePanel() {
         setLayout(new BorderLayout(10, 10));
         add(crearFormulario(), BorderLayout.CENTER);
         add(crearBotonera(), BorderLayout.SOUTH);
+    }
+
+    // 🔥 NUEVO: cargar datos en modo edición
+    public void cargarCliente(Cliente c) {
+        this.clienteEditando = c;
+
+        txtNombre.setText(c.getNombre());
+        txtDni.setText(c.getDni());
+        txtDireccion.setText(c.getDireccion());
+        txtPoblacion.setText(c.getPoblacion());
+        cmbProvincia.setSelectedItem(c.getProvincia());
+        txtCodigoPostal.setText(c.getCodigoPostal());
+        txtTelefonoFijo.setText(c.getTelefonoFijo());
+        txtTelefonoMovil.setText(c.getTelefonoMovil());
+        txtEmail.setText(c.getCorreoElectronico());
+        txtWeb.setText(c.getPaginaWeb());
+        cmbMetodoPago.setSelectedItem(c.getMetodoPago());
+        txtLimiteCredito.setText(c.getLimiteCredito() != null ? c.getLimiteCredito().toString() : "");
+        txtCuenta.setText(c.getNumCuentaBancaria());
+        txtImagen.setText(c.getImagenPath());
+        txtObservaciones.setText(c.getObservaciones());
+        chkActivo.setSelected(c.isActivo());
     }
 
     private JPanel crearFormulario() {
@@ -44,50 +68,43 @@ public class ClientePanel extends JPanel {
         cmbProvincia = new JComboBox<>(PROVINCIAS);
         cmbProvincia.setSelectedIndex(-1);
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("Nombre *"), gbc);
         gbc.gridx = 1;
         p.add(txtNombre, gbc);
         fila++;
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("DNI *"), gbc);
         gbc.gridx = 1;
         p.add(txtDni, gbc);
         fila++;
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("Dirección *"), gbc);
         gbc.gridx = 1;
         p.add(txtDireccion, gbc);
         fila++;
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("Población *"), gbc);
         gbc.gridx = 1;
         p.add(txtPoblacion, gbc);
         fila++;
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("Provincia *"), gbc);
         gbc.gridx = 1;
         p.add(cmbProvincia, gbc);
         fila++;
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("Código Postal"), gbc);
         gbc.gridx = 1;
         p.add(txtCodigoPostal, gbc);
         fila++;
 
-        gbc.gridx = 0;
-        gbc.gridy = fila;
+        gbc.gridx = 0; gbc.gridy = fila;
         p.add(new JLabel("Activo"), gbc);
         gbc.gridx = 1;
         p.add(chkActivo, gbc);
@@ -105,64 +122,55 @@ public class ClientePanel extends JPanel {
         txtObservaciones = new JTextArea(5, 20);
 
         fila = 0;
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Teléfono fijo"), gbc);
         gbc.gridx = 3;
         p.add(txtTelefonoFijo, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Teléfono móvil"), gbc);
         gbc.gridx = 3;
         p.add(txtTelefonoMovil, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Correo electrónico"), gbc);
         gbc.gridx = 3;
         p.add(txtEmail, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Página web"), gbc);
         gbc.gridx = 3;
         p.add(txtWeb, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Método de pago"), gbc);
         gbc.gridx = 3;
         p.add(cmbMetodoPago, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Límite de crédito"), gbc);
         gbc.gridx = 3;
         p.add(txtLimiteCredito, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Cuenta bancaria"), gbc);
         gbc.gridx = 3;
         p.add(txtCuenta, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Ruta imagen"), gbc);
         gbc.gridx = 3;
         p.add(txtImagen, gbc);
         fila++;
 
-        gbc.gridx = 2;
-        gbc.gridy = fila;
+        gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Observaciones"), gbc);
         gbc.gridx = 3;
         p.add(new JScrollPane(txtObservaciones), gbc);
@@ -179,7 +187,7 @@ public class ClientePanel extends JPanel {
         return p;
     }
 
-    // ===================== LÓGICA =====================
+    // ===================== GUARDAR =====================
     private void guardarCliente() {
 
         if (!validarFormulario()) {
@@ -193,7 +201,9 @@ public class ClientePanel extends JPanel {
         }
 
         try {
-            Cliente c = new Cliente();
+            // 🔥 Si estamos editando, usamos el mismo objeto
+            Cliente c = (clienteEditando != null) ? clienteEditando : new Cliente();
+
             c.setNombre(txtNombre.getText().trim());
             c.setDni(txtDni.getText().trim());
             c.setDireccion(txtDireccion.getText().trim());
@@ -217,7 +227,10 @@ public class ClientePanel extends JPanel {
             clienteDAO.guardar(c);
 
             JOptionPane.showMessageDialog(this, "Cliente guardado correctamente");
-            limpiarFormulario();
+
+            if (clienteEditando == null) {
+                limpiarFormulario();
+            }
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(

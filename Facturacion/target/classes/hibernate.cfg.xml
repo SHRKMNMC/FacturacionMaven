@@ -26,6 +26,8 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <mapping class="com.facturacion.entity.Cliente"/>
+        <mapping class="com.facturacion.entity.Articulo"/>
+
 
     </session-factory>
 </hibernate-configuration>
