@@ -215,4 +215,10 @@ public class Articulo {
     public void setObservacions(String observacions) {
         this.observacions = observacions;
     }
+
+    @Override
+    public String toString() {
+        return codi + " - " + nom;
+    }
+
 }

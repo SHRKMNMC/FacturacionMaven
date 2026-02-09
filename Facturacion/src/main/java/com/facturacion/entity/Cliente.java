@@ -197,4 +197,10 @@ public class Cliente {
     public void setImagenPath(String imagenPath) {
         this.imagenPath = imagenPath;
     }
+
+    @Override
+    public String toString() {
+        return nombre + " (" + dni + ")";
+    }
+
 }

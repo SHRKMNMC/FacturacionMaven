@@ -1,9 +1,7 @@
 package com.facturacion.gui;
 
-import com.facturacion.dao.ArticuloDAO;
-import com.facturacion.dao.ClienteDAO;
-import com.facturacion.entity.Articulo;
-import com.facturacion.entity.Cliente;
+import com.facturacion.dao.*;
+import com.facturacion.entity.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
@@ -17,7 +15,7 @@ public class MainMenuFrame extends JFrame {
 
     public MainMenuFrame() {
         setTitle("Sistema de Facturación");
-        setSize(1000, 600);
+        setSize(1200, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -34,9 +32,10 @@ public class MainMenuFrame extends JFrame {
         mainPanel.add(crearMenuCentral(), "menuPrincipal");
         mainPanel.add(crearMenuClientes(), "menuClientes");
         mainPanel.add(crearMenuArticulos(), "menuArticulos");
+        mainPanel.add(crearMenuAlbaranes(), "menuAlbaranes");
+        mainPanel.add(crearMenuFacturas(), "menuFacturas");
 
         getContentPane().add(mainPanel);
-
         cardLayout.show(mainPanel, "menuPrincipal");
     }
 
@@ -52,26 +51,21 @@ public class MainMenuFrame extends JFrame {
 
         JButton btnClientes = crearBoton("CLIENTES", new Color(88, 101, 242));
         JButton btnArticulos = crearBoton("ARTÍCULOS", new Color(88, 101, 242));
-        JButton btnFacturas = crearBoton("FACTURAS", new Color(100, 100, 100));
-        btnFacturas.setEnabled(false);
+        JButton btnAlbaranes = crearBoton("ALBARANES", new Color(88, 101, 242));
+        JButton btnFacturas = crearBoton("FACTURAS", new Color(88, 101, 242));
         JButton btnSalir = crearBoton("SALIR", new Color(114, 137, 218));
 
         btnClientes.addActionListener(e -> cardLayout.show(mainPanel, "menuClientes"));
         btnArticulos.addActionListener(e -> cardLayout.show(mainPanel, "menuArticulos"));
+        btnAlbaranes.addActionListener(e -> cardLayout.show(mainPanel, "menuAlbaranes"));
+        btnFacturas.addActionListener(e -> cardLayout.show(mainPanel, "menuFacturas"));
         btnSalir.addActionListener(e -> System.exit(0));
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(btnClientes, gbc);
-
-        gbc.gridy = 1;
-        panel.add(btnArticulos, gbc);
-
-        gbc.gridy = 2;
-        panel.add(btnFacturas, gbc);
-
-        gbc.gridy = 3;
-        panel.add(btnSalir, gbc);
+        gbc.gridx = 0; gbc.gridy = 0; panel.add(btnClientes, gbc);
+        gbc.gridy = 1; panel.add(btnArticulos, gbc);
+        gbc.gridy = 2; panel.add(btnAlbaranes, gbc);
+        gbc.gridy = 3; panel.add(btnFacturas, gbc);
+        gbc.gridy = 4; panel.add(btnSalir, gbc);
 
         return panel;
     }
@@ -81,47 +75,30 @@ public class MainMenuFrame extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(35, 39, 42));
 
-        JPanel botones = new JPanel(new GridBagLayout());
-        botones.setBackground(new Color(35, 39, 42));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        JButton btnNuevoCliente = crearBoton("Nuevo Cliente", new Color(88, 101, 242));
-        JButton btnBuscarId = crearBoton("Buscar por ID", new Color(88, 101, 242));
-        JButton btnBuscarNombre = crearBoton("Buscar por Nombre", new Color(88, 101, 242));
-        JButton btnListado = crearBoton("Listado Clientes", new Color(88, 101, 242));
-        JButton btnVolver = crearBoton("Volver al Menú", new Color(114, 137, 218));
-
+        JPanel botones = crearPanelBotones();
         JPanel contentPanel = new JPanel(new CardLayout());
+
         contentPanel.add(new JPanel(), "vacio");
         contentPanel.add(new ClientePanel(), "nuevoCliente");
         contentPanel.add(new ClienteListFramePanel(), "listadoClientes");
 
-        btnNuevoCliente.addActionListener(e -> ((CardLayout) contentPanel.getLayout()).show(contentPanel, "nuevoCliente"));
-        btnBuscarId.addActionListener(e -> buscarClientePorId());
-        btnBuscarNombre.addActionListener(e -> buscarClientePorNombre());
-        btnListado.addActionListener(e -> {
-            ClienteListFramePanel listado =
-                    (ClienteListFramePanel) contentPanel.getComponent(2);
+        añadirBoton(botones, "Nuevo Cliente", () ->
+                mostrar(contentPanel, "nuevoCliente"));
 
+        añadirBoton(botones, "Buscar por ID", () -> buscarClientePorId(contentPanel));
+        añadirBoton(botones, "Buscar por Nombre", () -> buscarClientePorNombre(contentPanel));
+
+        añadirBoton(botones, "Listado Clientes", () -> {
+            ClienteListFramePanel listado = obtenerPanel(contentPanel, ClienteListFramePanel.class);
             listado.mostrarTodos();
-
-            ((CardLayout) contentPanel.getLayout()).show(contentPanel, "listadoClientes");
+            mostrar(contentPanel, "listadoClientes");
         });
 
-        btnVolver.addActionListener(e -> cardLayout.show(mainPanel, "menuPrincipal"));
-
-        gbc.gridy = 0; botones.add(btnNuevoCliente, gbc);
-        gbc.gridy = 1; botones.add(btnBuscarId, gbc);
-        gbc.gridy = 2; botones.add(btnBuscarNombre, gbc);
-        gbc.gridy = 3; botones.add(btnListado, gbc);
-        gbc.gridy = 4; botones.add(btnVolver, gbc);
+        añadirBoton(botones, "Volver al Menú", () ->
+                cardLayout.show(mainPanel, "menuPrincipal"));
 
         panel.add(botones, BorderLayout.WEST);
         panel.add(contentPanel, BorderLayout.CENTER);
-
         return panel;
     }
 
@@ -130,160 +107,272 @@ public class MainMenuFrame extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(35, 39, 42));
 
-        JPanel botones = new JPanel(new GridBagLayout());
-        botones.setBackground(new Color(35, 39, 42));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        JButton btnNuevoArticulo = crearBoton("Nuevo Artículo", new Color(88, 101, 242));
-        JButton btnBuscarId = crearBoton("Buscar por ID", new Color(88, 101, 242));
-        JButton btnBuscarNombre = crearBoton("Buscar por Nombre", new Color(88, 101, 242));
-        JButton btnListadoArticulos = crearBoton("Listado Artículos", new Color(88, 101, 242));
-        JButton btnVolver = crearBoton("Volver al Menú", new Color(114, 137, 218));
-
+        JPanel botones = crearPanelBotones();
         JPanel contentPanel = new JPanel(new CardLayout());
+
         contentPanel.add(new JPanel(), "vacio");
         contentPanel.add(new ArticuloPanel(), "nuevoArticulo");
         contentPanel.add(new ArticuloListFramePanel(), "listadoArticulos");
 
-        btnNuevoArticulo.addActionListener(e -> ((CardLayout) contentPanel.getLayout()).show(contentPanel, "nuevoArticulo"));
-        btnBuscarId.addActionListener(e -> buscarArticuloPorId());
-        btnBuscarNombre.addActionListener(e -> buscarArticuloPorNombre());
-        btnListadoArticulos.addActionListener(e -> ((CardLayout) contentPanel.getLayout()).show(contentPanel, "listadoArticulos"));
-        btnVolver.addActionListener(e -> cardLayout.show(mainPanel, "menuPrincipal"));
+        añadirBoton(botones, "Nuevo Artículo", () ->
+                mostrar(contentPanel, "nuevoArticulo"));
 
-        gbc.gridy = 0; botones.add(btnNuevoArticulo, gbc);
-        gbc.gridy = 1; botones.add(btnBuscarId, gbc);
-        gbc.gridy = 2; botones.add(btnBuscarNombre, gbc);
-        gbc.gridy = 3; botones.add(btnListadoArticulos, gbc);
-        gbc.gridy = 4; botones.add(btnVolver, gbc);
+        añadirBoton(botones, "Buscar por ID", () -> buscarArticuloPorId(contentPanel));
+        añadirBoton(botones, "Buscar por Nombre", () -> buscarArticuloPorNombre(contentPanel));
+
+        añadirBoton(botones, "Listado Artículos", () ->
+                mostrar(contentPanel, "listadoArticulos"));
+
+        añadirBoton(botones, "Volver al Menú", () ->
+                cardLayout.show(mainPanel, "menuPrincipal"));
 
         panel.add(botones, BorderLayout.WEST);
         panel.add(contentPanel, BorderLayout.CENTER);
-
         return panel;
     }
 
-    // =================== MÉTODOS DE BÚSQUEDA ===================
+    // =================== MENU ALBARANES ===================
+    private JPanel crearMenuAlbaranes() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(new Color(35, 39, 42));
 
-    private void buscarClientePorId() {
-        String input = JOptionPane.showInputDialog(this, "Introduce el ID del cliente:");
+        JPanel botones = crearPanelBotones();
+        JPanel contentPanel = new JPanel(new CardLayout());
 
-        if (input == null || input.trim().isEmpty()) return;
+        contentPanel.add(new JPanel(), "vacio");
+        contentPanel.add(new AlbaranPanel(), "nuevoAlbaran");
+        contentPanel.add(new AlbaranListFramePanel(), "listadoAlbaranes");
+
+        añadirBoton(botones, "Nuevo Albarán", () ->
+                mostrar(contentPanel, "nuevoAlbaran"));
+
+        añadirBoton(botones, "Buscar por ID", () -> buscarAlbaranPorId(contentPanel));
+        añadirBoton(botones, "Buscar por Cliente", () -> buscarAlbaranPorCliente(contentPanel));
+
+        añadirBoton(botones, "Listado Albaranes", () ->
+                mostrar(contentPanel, "listadoAlbaranes"));
+
+        añadirBoton(botones, "Volver al Menú", () ->
+                cardLayout.show(mainPanel, "menuPrincipal"));
+
+        panel.add(botones, BorderLayout.WEST);
+        panel.add(contentPanel, BorderLayout.CENTER);
+        return panel;
+    }
+
+    // =================== MENU FACTURAS ===================
+    private JPanel crearMenuFacturas() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(new Color(35, 39, 42));
+
+        JPanel botones = crearPanelBotones();
+        JPanel contentPanel = new JPanel(new CardLayout());
+
+        contentPanel.add(new JPanel(), "vacio");
+        contentPanel.add(new FacturaListFramePanel(), "listadoFacturas");
+
+        añadirBoton(botones, "Buscar por ID", () -> buscarFacturaPorId(contentPanel));
+        añadirBoton(botones, "Buscar por Cliente", () -> buscarFacturaPorCliente(contentPanel));
+
+        añadirBoton(botones, "Listado Facturas", () ->
+                mostrar(contentPanel, "listadoFacturas"));
+
+        añadirBoton(botones, "Volver al Menú", () ->
+                cardLayout.show(mainPanel, "menuPrincipal"));
+
+        panel.add(botones, BorderLayout.WEST);
+        panel.add(contentPanel, BorderLayout.CENTER);
+        return panel;
+    }
+
+    // =================== BÚSQUEDAS (CORREGIDAS) ===================
+
+    private <T> T obtenerPanel(JPanel contentPanel, Class<T> tipo) {
+        for (Component c : contentPanel.getComponents()) {
+            if (tipo.isInstance(c)) return tipo.cast(c);
+        }
+        return null;
+    }
+
+    private void buscarClientePorId(JPanel contentPanel) {
+        String input = JOptionPane.showInputDialog(this, "ID cliente:");
+        if (input == null) return;
 
         try {
-            int id = Integer.parseInt(input.trim());
-            ClienteDAO dao = new ClienteDAO();
-            Cliente c = dao.buscarPorId(id);
-
+            Cliente c = new ClienteDAO().buscarPorId(Integer.parseInt(input));
             if (c == null) {
-                JOptionPane.showMessageDialog(this, "No existe un cliente con ese ID.");
+                JOptionPane.showMessageDialog(this, "No existe.");
                 return;
             }
 
-            // Obtener el panel de listado ya existente
-            JPanel menuClientes = (JPanel) mainPanel.getComponent(1);
-            JPanel contentPanel = (JPanel) menuClientes.getComponent(1);
-            ClienteListFramePanel listado =
-                    (ClienteListFramePanel) contentPanel.getComponent(2);
-
+            ClienteListFramePanel listado = obtenerPanel(contentPanel, ClienteListFramePanel.class);
             listado.mostrarSolo(List.of(c));
 
-            ((CardLayout) contentPanel.getLayout()).show(contentPanel, "listadoClientes");
+            mostrar(contentPanel, "listadoClientes");
             cardLayout.show(mainPanel, "menuClientes");
 
-        } catch (NumberFormatException ex) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "ID inválido.");
         }
     }
 
+    private void buscarClientePorNombre(JPanel contentPanel) {
+        String nombre = JOptionPane.showInputDialog(this, "Nombre cliente:");
+        if (nombre == null) return;
 
-
-    private void buscarClientePorNombre() {
-        String nombre = JOptionPane.showInputDialog(this, "Introduce el nombre del cliente:");
-
-        if (nombre == null || nombre.trim().isEmpty()) return;
-
-        ClienteDAO dao = new ClienteDAO();
-        List<Cliente> lista = dao.buscarPorNombre(nombre.trim());
-
+        List<Cliente> lista = new ClienteDAO().buscarPorNombre(nombre);
         if (lista.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se encontraron clientes con ese nombre.");
+            JOptionPane.showMessageDialog(this, "No encontrado.");
             return;
         }
 
-        JPanel menuClientes = (JPanel) mainPanel.getComponent(1);
-        JPanel contentPanel = (JPanel) menuClientes.getComponent(1);
-        ClienteListFramePanel listado =
-                (ClienteListFramePanel) contentPanel.getComponent(2);
-
+        ClienteListFramePanel listado = obtenerPanel(contentPanel, ClienteListFramePanel.class);
         listado.mostrarSolo(lista);
 
-        ((CardLayout) contentPanel.getLayout()).show(contentPanel, "listadoClientes");
+        mostrar(contentPanel, "listadoClientes");
         cardLayout.show(mainPanel, "menuClientes");
     }
 
-
-    private void buscarArticuloPorId() {
-        String input = JOptionPane.showInputDialog(this, "Introduce el ID del artículo:");
-
-        if (input == null || input.trim().isEmpty()) return;
+    private void buscarArticuloPorId(JPanel contentPanel) {
+        String input = JOptionPane.showInputDialog(this, "ID artículo:");
+        if (input == null) return;
 
         try {
-            int id = Integer.parseInt(input.trim());
-            ArticuloDAO dao = new ArticuloDAO();
-            Articulo a = dao.buscarPorId(id);
-
+            Articulo a = new ArticuloDAO().buscarPorId(Integer.parseInt(input));
             if (a == null) {
-                JOptionPane.showMessageDialog(this, "No existe un artículo con ese ID.");
+                JOptionPane.showMessageDialog(this, "No existe.");
                 return;
             }
 
-            JPanel menuArticulos = (JPanel) mainPanel.getComponent(2);
-            JPanel contentPanel = (JPanel) menuArticulos.getComponent(1);
-            ArticuloListFramePanel listado =
-                    (ArticuloListFramePanel) contentPanel.getComponent(2);
-
+            ArticuloListFramePanel listado = obtenerPanel(contentPanel, ArticuloListFramePanel.class);
             listado.mostrarSolo(List.of(a));
 
-            ((CardLayout) contentPanel.getLayout()).show(contentPanel, "listadoArticulos");
+            mostrar(contentPanel, "listadoArticulos");
             cardLayout.show(mainPanel, "menuArticulos");
 
-        } catch (NumberFormatException ex) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "ID inválido.");
         }
     }
 
+    private void buscarArticuloPorNombre(JPanel contentPanel) {
+        String nombre = JOptionPane.showInputDialog(this, "Nombre artículo:");
+        if (nombre == null) return;
 
-    private void buscarArticuloPorNombre() {
-        String nombre = JOptionPane.showInputDialog(this, "Introduce el nombre del artículo:");
-
-        if (nombre == null || nombre.trim().isEmpty()) return;
-
-        ArticuloDAO dao = new ArticuloDAO();
-        List<Articulo> lista = dao.buscarPorNombre(nombre.trim());
-
+        List<Articulo> lista = new ArticuloDAO().buscarPorNombre(nombre);
         if (lista.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se encontraron artículos con ese nombre.");
+            JOptionPane.showMessageDialog(this, "No encontrado.");
             return;
         }
 
-        JPanel menuArticulos = (JPanel) mainPanel.getComponent(2);
-        JPanel contentPanel = (JPanel) menuArticulos.getComponent(1);
-        ArticuloListFramePanel listado =
-                (ArticuloListFramePanel) contentPanel.getComponent(2);
-
+        ArticuloListFramePanel listado = obtenerPanel(contentPanel, ArticuloListFramePanel.class);
         listado.mostrarSolo(lista);
 
-        ((CardLayout) contentPanel.getLayout()).show(contentPanel, "listadoArticulos");
+        mostrar(contentPanel, "listadoArticulos");
         cardLayout.show(mainPanel, "menuArticulos");
     }
 
+    private void buscarAlbaranPorId(JPanel contentPanel) {
+        String input = JOptionPane.showInputDialog(this, "ID albarán:");
+        if (input == null) return;
 
+        try {
+            Albaran a = new AlbaranDAO().buscarPorId(Integer.parseInt(input));
+            if (a == null) {
+                JOptionPane.showMessageDialog(this, "No existe.");
+                return;
+            }
 
-    // =================== BOTÓN ESTILO ===================
+            AlbaranListFramePanel listado = obtenerPanel(contentPanel, AlbaranListFramePanel.class);
+            listado.mostrarSolo(List.of(a));
+
+            mostrar(contentPanel, "listadoAlbaranes");
+            cardLayout.show(mainPanel, "menuAlbaranes");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "ID inválido.");
+        }
+    }
+
+    private void buscarAlbaranPorCliente(JPanel contentPanel) {
+        String nombre = JOptionPane.showInputDialog(this, "Nombre cliente:");
+        if (nombre == null) return;
+
+        List<Albaran> lista = new AlbaranDAO().buscarPorNombreCliente(nombre);
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No encontrado.");
+            return;
+        }
+
+        AlbaranListFramePanel listado = obtenerPanel(contentPanel, AlbaranListFramePanel.class);
+        listado.mostrarSolo(lista);
+
+        mostrar(contentPanel, "listadoAlbaranes");
+        cardLayout.show(mainPanel, "menuAlbaranes");
+    }
+
+    private void buscarFacturaPorId(JPanel contentPanel) {
+        String input = JOptionPane.showInputDialog(this, "ID factura:");
+        if (input == null) return;
+
+        try {
+            Factura f = new FacturaDAO().buscarPorId(Integer.parseInt(input));
+            if (f == null) {
+                JOptionPane.showMessageDialog(this, "No existe.");
+                return;
+            }
+
+            FacturaListFramePanel listado = obtenerPanel(contentPanel, FacturaListFramePanel.class);
+            listado.mostrarSolo(List.of(f));
+
+            mostrar(contentPanel, "listadoFacturas");
+            cardLayout.show(mainPanel, "menuFacturas");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "ID inválido.");
+        }
+    }
+
+    private void buscarFacturaPorCliente(JPanel contentPanel) {
+        String nombre = JOptionPane.showInputDialog(this, "Nombre cliente:");
+        if (nombre == null) return;
+
+        List<Factura> lista = new FacturaDAO().buscarPorNombreCliente(nombre);
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No encontrado.");
+            return;
+        }
+
+        FacturaListFramePanel listado = obtenerPanel(contentPanel, FacturaListFramePanel.class);
+        listado.mostrarSolo(lista);
+
+        mostrar(contentPanel, "listadoFacturas");
+        cardLayout.show(mainPanel, "menuFacturas");
+    }
+
+    // =================== UTILIDADES ===================
+    private JPanel crearPanelBotones() {
+        JPanel p = new JPanel(new GridBagLayout());
+        p.setBackground(new Color(35, 39, 42));
+        return p;
+    }
+
+    private void añadirBoton(JPanel panel, String texto, Runnable action) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = panel.getComponentCount();
+
+        JButton btn = crearBoton(texto, new Color(88, 101, 242));
+        btn.addActionListener(e -> action.run());
+        panel.add(btn, gbc);
+    }
+
+    private void mostrar(JPanel contentPanel, String card) {
+        ((CardLayout) contentPanel.getLayout()).show(contentPanel, card);
+    }
+
     private JButton crearBoton(String texto, Color colorBase) {
         JButton btn = new JButton(texto) {
             @Override

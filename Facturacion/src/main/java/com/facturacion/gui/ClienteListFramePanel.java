@@ -44,7 +44,7 @@ public class ClienteListFramePanel extends JPanel {
         table.getTableHeader().setBackground(new Color(35, 39, 42));
         table.getTableHeader().setForeground(Color.WHITE);
 
-        // ===================== TOOLTIP DINÁMICO =====================
+        // Tooltip dinámico
         table.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
@@ -88,6 +88,14 @@ public class ClienteListFramePanel extends JPanel {
         btnEditar.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnEditar.addActionListener(e -> editarClienteSeleccionado());
         southPanel.add(btnEditar);
+
+        // ⭐ NUEVO: Botón ver ficha
+        JButton btnVer = new JButton("Ver");
+        btnVer.setBackground(new Color(46, 204, 113));
+        btnVer.setForeground(Color.WHITE);
+        btnVer.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnVer.addActionListener(e -> verClienteSeleccionado());
+        southPanel.add(btnVer);
 
         add(southPanel, BorderLayout.SOUTH);
 
@@ -197,6 +205,34 @@ public class ClienteListFramePanel extends JPanel {
         cargarClientes();
     }
 
+    // ===================== VER CLIENTE (NUEVO) =====================
+    private void verClienteSeleccionado() {
+        int fila = table.getSelectedRow();
+
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un cliente.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int idCliente = (int) tableModel.getValueAt(fila, 0);
+
+        Cliente c = clienteDAO.buscarPorId(idCliente);
+
+        if (c == null) {
+            JOptionPane.showMessageDialog(this, "No se pudo cargar el cliente.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        ClienteFichaPanel ficha = new ClienteFichaPanel();
+        ficha.cargarCliente(c);
+
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Ficha del Cliente", true);
+        dialog.setContentPane(ficha);
+        dialog.setSize(750, 650);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
     public void mostrarSolo(List<Cliente> lista) {
         tableModel.setRowCount(0);
 
@@ -226,6 +262,4 @@ public class ClienteListFramePanel extends JPanel {
     public void mostrarTodos() {
         cargarClientes();
     }
-
-
 }

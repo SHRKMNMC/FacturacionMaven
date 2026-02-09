@@ -19,7 +19,6 @@ public class ClientePanel extends JPanel {
     private JCheckBox chkActivo;
     private ClienteDAO clienteDAO = new ClienteDAO();
 
-    // 🔥 NUEVO: cliente en edición
     private Cliente clienteEditando = null;
 
     public ClientePanel() {
@@ -28,7 +27,6 @@ public class ClientePanel extends JPanel {
         add(crearBotonera(), BorderLayout.SOUTH);
     }
 
-    // 🔥 NUEVO: cargar datos en modo edición
     public void cargarCliente(Cliente c) {
         this.clienteEditando = c;
 
@@ -170,11 +168,20 @@ public class ClientePanel extends JPanel {
         p.add(txtImagen, gbc);
         fila++;
 
+        // ===================== OBSERVACIONES (CORREGIDO) =====================
         gbc.gridx = 2; gbc.gridy = fila;
         p.add(new JLabel("Observaciones"), gbc);
+
         gbc.gridx = 3;
-        p.add(new JScrollPane(txtObservaciones), gbc);
-        fila++;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+
+        JScrollPane spObs = new JScrollPane(txtObservaciones);
+        spObs.setPreferredSize(new Dimension(250, 80));
+        p.add(spObs, gbc);
+
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         return p;
     }
@@ -187,7 +194,6 @@ public class ClientePanel extends JPanel {
         return p;
     }
 
-    // ===================== GUARDAR =====================
     private void guardarCliente() {
 
         if (!validarFormulario()) {
@@ -201,7 +207,6 @@ public class ClientePanel extends JPanel {
         }
 
         try {
-            // 🔥 Si estamos editando, usamos el mismo objeto
             Cliente c = (clienteEditando != null) ? clienteEditando : new Cliente();
 
             c.setNombre(txtNombre.getText().trim());
