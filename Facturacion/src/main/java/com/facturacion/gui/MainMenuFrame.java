@@ -2,6 +2,13 @@ package com.facturacion.gui;
 
 import com.facturacion.dao.*;
 import com.facturacion.entity.*;
+import com.facturacion.gui.albaranes.AlbaranListFramePanel;
+import com.facturacion.gui.albaranes.AlbaranPanel;
+import com.facturacion.gui.articulos.ArticuloListFramePanel;
+import com.facturacion.gui.articulos.ArticuloPanel;
+import com.facturacion.gui.clientes.ClienteListFramePanel;
+import com.facturacion.gui.clientes.ClientePanel;
+import com.facturacion.gui.facturas.FacturaListFramePanel;
 import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
