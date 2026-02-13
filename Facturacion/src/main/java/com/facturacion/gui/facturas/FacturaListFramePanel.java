@@ -139,7 +139,25 @@ public class FacturaListFramePanel extends JPanel {
             return;
         }
 
-        // Abrir panel de rectificación
+        // ❌ 1. No permitir rectificar una factura rectificativa
+        if (original.isEsRectificativa()) {
+            JOptionPane.showMessageDialog(this,
+                    "No se puede rectificar una factura rectificativa.",
+                    "Operación no permitida",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // ❌ 2. No permitir rectificar una factura que ya ha sido rectificada
+        if (original.getFacturaRectificada() != null) {
+            JOptionPane.showMessageDialog(this,
+                    "Esta factura ya ha sido rectificada.\nNo se puede rectificar de nuevo.",
+                    "Operación no permitida",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // ✔ 3. Abrir panel de rectificación
         FacturaRectificativaPanel panel = new FacturaRectificativaPanel(original);
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
@@ -150,7 +168,7 @@ public class FacturaListFramePanel extends JPanel {
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
 
-        // Refrescar tabla después de crear la rectificativa
         cargarFacturas();
     }
+
 }
