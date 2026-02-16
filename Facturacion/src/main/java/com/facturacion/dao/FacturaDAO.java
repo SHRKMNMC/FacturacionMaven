@@ -48,8 +48,8 @@ public class FacturaDAO {
             Factura factura = new Factura();
             factura.setCliente(albaran.getCliente());
 
-            // 🔥 PONEMOS UN VALOR TEMPORAL PARA EVITAR EL ERROR
-            factura.setNumeroFactura("TEMP");
+            // Número correlativo de factura normal
+            factura.setNumeroFactura(Factura.generarNumeroFactura(false));
 
             BigDecimal totalBase = BigDecimal.ZERO;
             BigDecimal totalIva = BigDecimal.ZERO;
@@ -80,15 +80,10 @@ public class FacturaDAO {
             factura.setTotalIva(totalIva);
             factura.setTotalFactura(totalBase.add(totalIva));
 
-            // 1️⃣ Guardar para obtener ID
+            // Guardar factura con número ya asignado
             session.save(factura);
-            session.flush();
 
-            // 2️⃣ Ahora sí: numeroFactura = ID real
-            factura.setNumeroFactura(factura.getId().toString());
-            session.update(factura);
-
-            // 3️⃣ Marcar albarán como convertido
+            // Marcar albarán como convertido
             albaran.setConvertidoFactura(true);
             session.update(albaran);
 
@@ -122,8 +117,8 @@ public class FacturaDAO {
             Factura rect = new Factura();
             rect.setCliente(original.getCliente());
 
-            // Número rectificativa: 152R
-            rect.setNumeroFactura(original.getNumeroFactura() + "R");
+            // Número correlativo de rectificativa (R1, R2, R3, ...)
+            rect.setNumeroFactura(Factura.generarNumeroFactura(true));
 
             rect.setEsRectificativa(true);
             rect.setFacturaRectificada(original);

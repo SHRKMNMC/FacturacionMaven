@@ -46,6 +46,22 @@ public class Factura {
     @JoinColumn(name = "rectifica_id")
     private Factura facturaRectificada;
 
+    // ============================
+    // NUEVO: CONTADORES ESTÁTICOS
+    // ============================
+    private static int contadorNormales = 0;
+    private static int contadorRectificativas = 0;
+
+    public static synchronized String generarNumeroFactura(boolean esRectificativa) {
+        if (esRectificativa) {
+            contadorRectificativas++;
+            return "R" + contadorRectificativas;
+        } else {
+            contadorNormales++;
+            return String.valueOf(contadorNormales);
+        }
+    }
+
     @PrePersist
     public void prePersist() {
         if (fecha == null) fecha = LocalDateTime.now();

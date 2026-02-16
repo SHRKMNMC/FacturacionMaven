@@ -47,37 +47,54 @@ public class FacturaRectificativaPanel extends JPanel {
         p.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(6, 10, 6, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Etiquetas
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+
         JLabel lbl1 = crearLabel("Factura original:");
         JLabel lbl2 = crearLabel("Cliente:");
         JLabel lbl3 = crearLabel("Fecha:");
         JLabel lbl4 = crearLabel("Total:");
         JLabel lbl5 = crearLabel("Tipo de rectificación:");
 
-        // Valores
         JLabel v1 = crearValor(facturaOriginal.getNumeroFactura());
         JLabel v2 = crearValor(facturaOriginal.getCliente().getNombre());
         JLabel v3 = crearValor(facturaOriginal.getFecha().toString());
         JLabel v4 = crearValor(facturaOriginal.getTotalFactura() + " €");
         JLabel v5 = crearValor("Rectificación total (todas las líneas en negativo)");
 
-        gbc.gridx = 0; gbc.gridy = 0; p.add(lbl1, gbc);
-        gbc.gridx = 1; p.add(v1, gbc);
+        int fila = 0;
 
-        gbc.gridx = 0; gbc.gridy = 1; p.add(lbl2, gbc);
-        gbc.gridx = 1; p.add(v2, gbc);
+        gbc.gridx = 0; gbc.gridy = fila;
+        p.add(lbl1, gbc);
+        gbc.gridx = 1;
+        p.add(v1, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = 2; p.add(lbl3, gbc);
-        gbc.gridx = 1; p.add(v3, gbc);
+        gbc.gridx = 0; gbc.gridy = fila;
+        p.add(lbl2, gbc);
+        gbc.gridx = 1;
+        p.add(v2, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = 3; p.add(lbl4, gbc);
-        gbc.gridx = 1; p.add(v4, gbc);
+        gbc.gridx = 0; gbc.gridy = fila;
+        p.add(lbl3, gbc);
+        gbc.gridx = 1;
+        p.add(v3, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = 4; p.add(lbl5, gbc);
-        gbc.gridx = 1; p.add(v5, gbc);
+        gbc.gridx = 0; gbc.gridy = fila;
+        p.add(lbl4, gbc);
+        gbc.gridx = 1;
+        p.add(v4, gbc);
+        fila++;
+
+        gbc.gridx = 0; gbc.gridy = fila;
+        p.add(lbl5, gbc);
+        gbc.gridx = 1;
+        p.add(v5, gbc);
 
         return p;
     }
@@ -93,6 +110,13 @@ public class FacturaRectificativaPanel extends JPanel {
         JLabel l = new JLabel(txt);
         l.setForeground(Color.WHITE);
         l.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        // 🔥 Ajuste clave: borde fino + padding mínimo
+        l.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(88, 101, 242)),
+                BorderFactory.createEmptyBorder(2, 6, 2, 6)
+        ));
+
         return l;
     }
 

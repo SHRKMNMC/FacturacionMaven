@@ -53,12 +53,9 @@ public class FacturaListFramePanel extends JPanel {
         btnVer.addActionListener(e -> ver());
         south.add(btnVer);
 
-        // NUEVO: botón rectificar
         JButton btnRectificar = new JButton("Rectificar");
         btnRectificar.addActionListener(e -> rectificar());
         south.add(btnRectificar);
-
-        // ❌ Eliminado botón eliminar (ya no se pueden borrar facturas)
 
         add(south, BorderLayout.SOUTH);
 
@@ -115,14 +112,17 @@ public class FacturaListFramePanel extends JPanel {
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Factura", true);
         dialog.setContentPane(panel);
-        dialog.setSize(900, 600);
+
+        // Ajustar al contenido
+        dialog.pack();
+
+        // 🔥 Hacerlo rectangular y amplio sin deformar los campos
+        dialog.setMinimumSize(new Dimension(900, 600));
+
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
-    // ============================
-    // NUEVO: RECTIFICAR FACTURA
-    // ============================
     private void rectificar() {
         int fila = table.getSelectedRow();
 
@@ -139,7 +139,6 @@ public class FacturaListFramePanel extends JPanel {
             return;
         }
 
-        // ❌ 1. No permitir rectificar una factura rectificativa
         if (original.isEsRectificativa()) {
             JOptionPane.showMessageDialog(this,
                     "No se puede rectificar una factura rectificativa.",
@@ -148,7 +147,6 @@ public class FacturaListFramePanel extends JPanel {
             return;
         }
 
-        // ❌ 2. No permitir rectificar una factura que ya ha sido rectificada
         if (original.getFacturaRectificada() != null) {
             JOptionPane.showMessageDialog(this,
                     "Esta factura ya ha sido rectificada.\nNo se puede rectificar de nuevo.",
@@ -157,18 +155,22 @@ public class FacturaListFramePanel extends JPanel {
             return;
         }
 
-        // ✔ 3. Abrir panel de rectificación
         FacturaRectificativaPanel panel = new FacturaRectificativaPanel(original);
 
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this),
                 "Factura rectificativa", true);
 
         dialog.setContentPane(panel);
-        dialog.setSize(600, 400);
+
+        // Ajustar al contenido
+        dialog.pack();
+
+        // 🔥 Tamaño rectangular adecuado
+        dialog.setMinimumSize(new Dimension(600, 400));
+
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
 
         cargarFacturas();
     }
-
 }
