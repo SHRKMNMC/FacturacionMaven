@@ -22,9 +22,6 @@ public class FacturaRectificativaPanel extends JPanel {
         add(crearBotonera(), BorderLayout.SOUTH);
     }
 
-    // ============================
-    // CABECERA
-    // ============================
     private JPanel crearCabecera() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(new Color(45, 49, 52));
@@ -38,10 +35,10 @@ public class FacturaRectificativaPanel extends JPanel {
         return p;
     }
 
-    // ============================
-    // CONTENIDO CENTRAL
-    // ============================
     private JPanel crearContenido() {
+        JPanel contenedor = new JPanel(new BorderLayout());
+        contenedor.setBackground(new Color(35, 39, 42));
+
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(new Color(35, 39, 42));
         p.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -96,7 +93,10 @@ public class FacturaRectificativaPanel extends JPanel {
         gbc.gridx = 1;
         p.add(v5, gbc);
 
-        return p;
+        // 🔥 CLAVE: alineación a la izquierda
+        contenedor.add(p, BorderLayout.WEST);
+
+        return contenedor;
     }
 
     private JLabel crearLabel(String txt) {
@@ -111,7 +111,6 @@ public class FacturaRectificativaPanel extends JPanel {
         l.setForeground(Color.WHITE);
         l.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        // 🔥 Ajuste clave: borde fino + padding mínimo
         l.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(88, 101, 242)),
                 BorderFactory.createEmptyBorder(2, 6, 2, 6)
@@ -120,9 +119,6 @@ public class FacturaRectificativaPanel extends JPanel {
         return l;
     }
 
-    // ============================
-    // BOTONERA
-    // ============================
     private JPanel crearBotonera() {
         JPanel p = new JPanel();
         p.setBackground(new Color(35, 39, 42));
@@ -139,9 +135,6 @@ public class FacturaRectificativaPanel extends JPanel {
         return p;
     }
 
-    // ============================
-    // LÓGICA
-    // ============================
     private void crearRectificativa() {
         int confirm = JOptionPane.showConfirmDialog(
                 this,

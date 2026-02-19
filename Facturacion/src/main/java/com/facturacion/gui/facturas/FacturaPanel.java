@@ -109,7 +109,8 @@ public class FacturaPanel extends JPanel {
         gbc.gridx = 1;
         datos.add(txtRectifica, gbc);
 
-        contenedor.add(datos, BorderLayout.CENTER);
+        // 🔥 CLAVE: alineación a la izquierda
+        contenedor.add(datos, BorderLayout.WEST);
 
         return contenedor;
     }
@@ -153,7 +154,6 @@ public class FacturaPanel extends JPanel {
         gbc.insets = new Insets(4, 10, 4, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // 🔥 Igual que arriba: NO expandir horizontalmente
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
 
@@ -196,7 +196,6 @@ public class FacturaPanel extends JPanel {
         t.setBackground(new Color(30, 33, 36));
         t.setForeground(Color.WHITE);
 
-        // 🔥 Ajuste clave: padding mínimo + borde fino
         t.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(88, 101, 242)),
                 BorderFactory.createEmptyBorder(1, 4, 1, 4)
